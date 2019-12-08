@@ -7,6 +7,16 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <Label Content="Highest IMDB score" HorizontalAlignment="Left" Margin="48,52,0,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="txtScore" HorizontalAlignment="Left" Margin="48,83,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="21" Width="115"/>
+        <Label Content="# of Anthony Russo movies" HorizontalAlignment="Left" Margin="48,121,0,0" VerticalAlignment="Top" Width="162" Height="29"/>
+        <TextBlock x:Name="txtAnthony" HorizontalAlignment="Left" Margin="48,155,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+        <Label Content="# of movies starring Robert Downey Jr" HorizontalAlignment="Left" Margin="48,188,0,0" VerticalAlignment="Top" Width="219" Height="29"/>
+        <TextBlock x:Name="txtIronMan" HorizontalAlignment="Left" Margin="48,222,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+        <Label Content="Voted users &gt; 350000" HorizontalAlignment="Left" Margin="298,52,0,0" VerticalAlignment="Top"/>
+        <Label Content="Genres" HorizontalAlignment="Left" Margin="308,181,0,0" VerticalAlignment="Top"/>
+        <ListBox x:Name="lstVote" HorizontalAlignment="Left" Height="100" Margin="308,78,0,0" VerticalAlignment="Top" Width="100"/>
+        <ListBox x:Name="lstGenres" HorizontalAlignment="Left" Height="100" Margin="308,207,0,0" VerticalAlignment="Top" Width="100"/>
+
     </Grid>
 </Window>
