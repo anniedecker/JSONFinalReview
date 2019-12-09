@@ -40,15 +40,10 @@ namespace JSONFinalReview
         {
             //because more than 1 movie being stored we have to create a list
             List<Movie> MoviesNumberUsersVoted = new List<Movie>();
-            List<Movie> movies;
-            
+
+
             //gets all of the data for the movies
-            using (var client = new HttpClient())
-            {
-                var response = client.GetAsync(@"http://pcbstuou.w27.wh-2.com/webservices/3033/api/Movies?number=100").Result;
-                var content = response.Content.ReadAsStringAsync().Result;
-                movies = JsonConvert.DeserializeObject<List<Movie>>(content);
-            }
+            List<Movie> movies = GettingDataFromWebservice();
 
             //List all of the different genres for the movies
             GetAllGenres(movies);
@@ -60,6 +55,28 @@ namespace JSONFinalReview
             GetMoviesWithVotesGreaterThan(movies, 350000);
 
             //How many movies where Anthony Russo is the director?
+            AnthonyRussoDirectedMovies(movies);
+
+            //How many movies where Robert Downey Jr. is the actor 1 ?
+            RDJMovies(movies);
+
+        }
+
+        private void RDJMovies(List<Movie> movies)
+        {
+            int count = 0;
+            foreach (var movie in movies)
+            {
+                if (movie.actor_1_name == "Robert Downey Jr.")
+                {
+                    count++;
+                }
+            }
+            txtIronMan.Text = count.ToString("N0");
+        }
+
+        private void AnthonyRussoDirectedMovies(List<Movie> movies)
+        {
             int count = 0;
             foreach (var movie in movies)
             {
@@ -69,20 +86,26 @@ namespace JSONFinalReview
                 }
             }
             txtAnthony.Text = count.ToString("N0");
-
-            //How many movies where Robert Downey Jr. is the actor 1 ?
-            count = 0;
-            foreach (var movie in movies)
-            {
-                if (movie.actor_1_name == "Robert Downey Jr.")
-                {
-                    count++;
-                }
-            }
-            txtIronMan.Text = count.ToString("N0");
-
-
+            
         }
+
+        /// <summary>
+        /// getting the data from the webservice
+        /// </summary>
+        /// <returns>a list of movies</returns>
+        private static List<Movie> GettingDataFromWebservice()
+        {
+            List<Movie> movies;
+            using (var client = new HttpClient())
+            {
+                var response = client.GetAsync(@"http://pcbstuou.w27.wh-2.com/webservices/3033/api/Movies?number=100").Result;
+                var content = response.Content.ReadAsStringAsync().Result;
+                movies = JsonConvert.DeserializeObject<List<Movie>>(content);
+            }
+
+            return movies;
+        }
+
         /// <summary>
         /// Get all movies with with 350000 or more votes
         /// </summary>
@@ -92,9 +115,9 @@ namespace JSONFinalReview
         {
             foreach (var movie in movies)
             {
-                if(movie.num_user_for_reviews >= v)
+                if (movie.num_user_for_reviews >= v)
                 {
-                    lstVote.Items.Add(movie.movie_title);
+                    lstVote.Items.Add(movie);
                 }
             }
         }
@@ -130,8 +153,31 @@ namespace JSONFinalReview
                     }
                 }
             }
-            txtScore.Text = highestIMDBscores[0].movie_title;
+            if (highestIMDBscores.Count() > 1)
+            {
+                string content = "";
+                foreach (var m in highestIMDBscores)
+                {
+                    content += m.movie_title + "\n";
+                }
+                txtScore.Text = content;
+            }
+            else
+            {
+                Hyperlink h = new Hyperlink();
+                h.NavigateUri = new Uri(highestIMDBscores[0].movie_imdb_link);
+                txtScore.Inlines.Add(highestIMDBscores[0].movie_title);
+                h.RequestNavigate += LinkOnRequestNavigate;
+                txtScore.Inlines.Add(h);
+            }
+            
         }
+
+        private void LinkOnRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.Uri.ToString());
+        }
+
         /// <summary>
         /// getting the genres
         /// </summary>
@@ -140,7 +186,19 @@ namespace JSONFinalReview
         {
             foreach (var movie in movies)
             {
-                lstGenres.Items.Add(movie.genres);
+                if (movie.genres.Contains("|"))
+                {
+                    var gs = movie.genres.Split('|');
+                    foreach (var g in gs)
+                    {
+                        lstGenres.Items.Add(g);
+                    }
+                }
+                else
+                {
+                    lstGenres.Items.Add(movie.genres);
+                }
+                
             }
         }
         /// <summary>
